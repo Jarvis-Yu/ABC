@@ -1,7 +1,6 @@
 package pizza_delivery;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -18,14 +17,13 @@ public class LY820 {
   }
 
   public static Situation addBaseOn(Situation baseSituation, int groupNo) {
+
     if (baseSituation.pizza.size() < groupNo) {
-      return new Situation(
-          0, new Order(0, 0, 0, 0, List.of()));
+      return baseSituation;
     }
 
-    Pizza startPizza = baseSituation.pizza.get(0);
-    final int size = baseSituation.pizza.size();
     Situation newSituation = baseSituation.copyOf();
+    Pizza startPizza = newSituation.pizza.get(0);
     newSituation.pizza.remove(startPizza);
     List<Integer> newOrder = new ArrayList<>(List.of(startPizza.getNo()));
 
@@ -33,7 +31,7 @@ public class LY820 {
     Pizza theOther = new Pizza(-1, Set.of());
 
     for (int i = 1; i < groupNo; i++) {
-      final int upperBound = min(newSituation.pizza.size(), 10);
+      final int upperBound = min(newSituation.pizza.size(), 5);
       final List<Pizza> backUps = newSituation.pizza.subList(0, upperBound);
 
       theOther = backUps.get(0);
@@ -51,16 +49,13 @@ public class LY820 {
 
     newSituation.addOrder(combinedPizza.getSize(), newOrder);
 
-    System.out.printf("%n%nStart: %s", startPizza);
-    System.out.printf("%nNewSituation: %d%n%s%n%s", newSituation.getScore(), newSituation, newSituation.pizza);
-
     return newSituation;
   }
 
   public static void main(String[] args) {
-    Order order = Parser.parse(Main.ta);
+    long startTime = System.currentTimeMillis();
+    Order order = Parser.parse(Data.tb);
     order.pizza.sort(Pizza::compareTo);
-    System.out.println(order);
 
     Situation nothing = new Situation(0, order);
     Situation maxSoFar = new Situation(0, order);
@@ -81,29 +76,31 @@ public class LY820 {
       }
     }
 
-    for (int i = 0; i < order.numOfTeamOf2; i++) {
-      for (int j = 0; j < order.numOfTeamOf3; j++) {
-        for (int k = 0; k < order.numOfTeamOf4; k++) {
-          if (d[i][j][k].getScore() > 0) {
-            System.out.printf("%n%d %d %d: %s", i, j, k, d[i][j][k].getScore());
-          }
-        }
-      }
-    }
-
-    System.out.printf("%n%nFinally: %s%n%s", maxSoFar.getScore(), maxSoFar);
+//    System.out.printf("%n%nFinally: %s%n%s", maxSoFar.getScore(), maxSoFar);
+    System.out.println(maxSoFar.getScore());
+    long duration = System.currentTimeMillis() - startTime;
+    System.out.printf("Duration(ms): %d", duration);
   }
 }
 
 class Situation extends Order {
 
   private int score = 0;
-  private final List<Pair<Integer, List<Integer>>> orders = new ArrayList<>();
+  private List<Pair<Integer, List<Integer>>> orders = new ArrayList<>();
 
   public Situation(
       int score, int numberOfPizza, int numOfTeamOf2, int numOfTeamOf3, int numOfTeamOf4, List<Pizza> pizza) {
     super(numberOfPizza, numOfTeamOf2, numOfTeamOf3, numOfTeamOf4, pizza);
     this.score = score;
+  }
+
+  public Situation(
+      int score,
+      List<Pair<Integer, List<Integer>>> orders,
+      int numberOfPizza, int numOfTeamOf2, int numOfTeamOf3, int numOfTeamOf4, List<Pizza> pizza) {
+    super(numberOfPizza, numOfTeamOf2, numOfTeamOf3, numOfTeamOf4, pizza);
+    this.score = score;
+    this.orders = orders;
   }
 
   public Situation(int score, Order order) {
@@ -126,7 +123,13 @@ class Situation extends Order {
 
   public Situation copyOf() {
     return new Situation(
-        score, super.numberOfPizza, super.numOfTeamOf2, super.numOfTeamOf3, super.numOfTeamOf4, super.pizza);
+        score,
+        new ArrayList<>(orders),
+        super.numberOfPizza,
+        super.numOfTeamOf2,
+        super.numOfTeamOf3,
+        super.numOfTeamOf4,
+        new ArrayList<>(super.pizza));
   }
 
   @Override
