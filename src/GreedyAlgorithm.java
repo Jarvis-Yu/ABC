@@ -13,17 +13,15 @@ public class GreedyAlgorithm {
 				3 tomato mushroom basil
 				2 chicken basil""";
 
-  public static void main(String[] args) {
+  public static void solve(Order o ,int numberPerTeam, int teamNumber) {
 
-    var o = Parser.parse(t);
-    o.pizza.sort(Pizza::compareTo);
+    while(teamNumber > 0 && o.pizza.size() > numberPerTeam) {
+      teamNumber -= 1;
 
-    while(o.numOfTeamOf4 > 0 && o.pizza.size() > 4) {
-      o.numOfTeamOf4 -= 1;
       Pizza originalPizza = new Pizza(-1, Set.of());
-
       List<Pizza> answerPizzas = new ArrayList<>();
-      for (int i = 0; i < 4; i += 1) {
+
+      for (int i = 0; i < numberPerTeam; i += 1) {
         int bestPizzaIndex = -1;
         int bestIngredientNumber = -1;
         for (int pizzaIndex = 0; pizzaIndex < 256 && pizzaIndex < o.pizza.size(); pizzaIndex ++ ) {
@@ -37,13 +35,25 @@ public class GreedyAlgorithm {
         originalPizza.merge(bestPizza);
       }
 
-      System.out.print(4 + " ");
+      System.out.print(numberPerTeam + " ");
       for (Pizza pizzaUsed : answerPizzas) {
         System.out.print(pizzaUsed.getNo() + " ");
       }
       System.out.println();
 
     }
+  }
+
+  public static void main(String[] args) {
+
+    var o = Parser.parse(t);
+    o.pizza.sort(Pizza::compareTo);
+
+    solve(o, 4, o.numOfTeamOf4);
+    solve(o, 3, o.numOfTeamOf3);
+    solve(o, 2, o.numOfTeamOf2);
+
+
   }
 
 }
