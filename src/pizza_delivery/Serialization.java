@@ -15,7 +15,6 @@ public class Serialization {
         InputStreamReader read = new InputStreamReader(new FileInputStream(file));
         BufferedReader bufferedReader = new BufferedReader(read);
         String lineTxt = null;
-
         while ((lineTxt = bufferedReader.readLine()) != null) {
           list.add(lineTxt);
         }
