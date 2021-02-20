@@ -7,6 +7,7 @@ public class Order {
 	public int numOfTeamOf3;
 	public int numOfTeamOf4;
 	public List<Pizza> pizza;
+	public StringBuilder output = new StringBuilder();
 
 	public Order(int numberOfPizza, int numOfTeamOf2, int numOfTeamOf3, int numOfTeamOf4, List<Pizza> pizza) {
 		this.numberOfPizza = numberOfPizza;
