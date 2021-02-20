@@ -73,6 +73,14 @@ public class LY820 {
     List<TriPair<Integer, Integer, Integer>> combination = new ArrayList<>();
     combination.add(TriPair.pair(0, 0, 0));
 
+    for (int i = 0; i <= order.numOfTeamOf2; i++) {
+      for (int j = 0; j <= order.numOfTeamOf3; j++) {
+        for (int k = 0; k <= order.numOfTeamOf4; k++) {
+          d[i][j][k] = d[0][0][0];
+        }
+      }
+    }
+
     Situation nothing = new Situation(0, order);
     Situation maxSoFar = new Situation(0, order);
 
