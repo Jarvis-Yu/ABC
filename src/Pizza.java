@@ -19,4 +19,9 @@ public class Pizza {
     all.addAll(other.ingres);
     return all.size();
   }
+
+  @Override
+  public String toString() {
+    return this.ingres.toString();
+  }
 }
