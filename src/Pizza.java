@@ -31,6 +31,12 @@ public class Pizza implements Comparable<Pizza>{
     return all.size();
   }
 
+  public Pizza merge(Pizza other) {
+    Set<String> all = new HashSet<>(ingres);
+    all.addAll(other.ingres);
+    return new Pizza(-1, all);
+  }
+
   @Override
   public String toString() {
     return this.ingres.toString();
