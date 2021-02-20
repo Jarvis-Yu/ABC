@@ -16,4 +16,8 @@ public class Order {
 		this.pizza = pizza;
 	}
 
+	@Override
+	public String toString() {
+		return numberOfPizza + ", " + numOfTeamOf2 + ", " + numOfTeamOf3 + ", " +numOfTeamOf4 + ", " + pizza.toString();
+	}
 }
