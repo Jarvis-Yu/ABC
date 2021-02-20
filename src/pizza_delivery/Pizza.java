@@ -11,7 +11,10 @@ public class Pizza implements Comparable<Pizza>{
   public Pizza(int no, Set<String> ingres) {
     this.no = no;
     this.ingres = ingres;
+  }
 
+  public Pizza copyOf() {
+    return new Pizza(no, new HashSet<>(ingres));
   }
 
   public int getNo() {
