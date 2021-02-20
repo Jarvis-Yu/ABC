@@ -12,7 +12,10 @@ public class Main {
 
 		var o = Parser.parse(t);
 
-		System.out.println(o);
+		while (Greedy.runOnce(o, o.numOfTeamOf2 > 0, o.numOfTeamOf3 > 0, o.numOfTeamOf4 > 0)) {
+			System.out.println("Run...");
+		}
+		System.out.println(o.output.toString());
 
 	}
 }
