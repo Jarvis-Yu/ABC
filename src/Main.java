@@ -1,7 +1,6 @@
 public class Main {
 
-	public static void main(String[] args) {
-		String t = """
+	public static final String t = """
 				5 1 2 1\s
 				3 onion pepper olive
 				3 mushroom tomato basil
@@ -9,7 +8,10 @@ public class Main {
 				3 tomato mushroom basil
 				2 chicken basil""";
 
+	public static void main(String[] args) {
+
 		var o = Parser.parse(t);
+
 		System.out.println(o);
 
 	}
