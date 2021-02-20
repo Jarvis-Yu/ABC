@@ -19,6 +19,10 @@ public class Pizza {
     return ingres;
   }
 
+  public int getSize() {
+    return ingres.size();
+  }
+
   // 返回两个Pizza总共的不同ingres种类数
   public int diffIngresWith(Pizza other) {
     Set<String> all = new HashSet<>(ingres);
