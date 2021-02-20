@@ -1,3 +1,5 @@
+package pizza_delivery;
+
 public class Greedy {
 
 	public static final int DEPTH = 100;

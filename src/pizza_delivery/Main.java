@@ -1,3 +1,5 @@
+package pizza_delivery;
+
 public class Main {
 
 	public static final String t = """
