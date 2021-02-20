@@ -2,6 +2,15 @@ package pizza_delivery;
 
 public class Main {
 
+	public static final String ta = """
+      5 1 2 1 
+      3 onion pepper olive
+      3 mushroom tomato basil
+      3 chicken mushroom pepper
+      3 tomato mushroom basil
+      2 chicken basil
+      """;
+
 	public static final String t = """
 			500 65 60 60
 			5 mushrooms onions neapolitan-crust emmental-cheese cheddar

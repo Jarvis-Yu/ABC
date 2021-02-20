@@ -42,7 +42,7 @@ public class LY820 {
   }
 
   public static void main(String[] args) {
-    Order order = Parser.parse(Main.t);
+    Order order = Parser.parse(Main.ta);
     order.pizza.sort(Pizza::compareTo);
     System.out.println(order);
 
