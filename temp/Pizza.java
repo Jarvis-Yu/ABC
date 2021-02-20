@@ -29,6 +29,11 @@ public class Pizza implements Comparable<Pizza>{
     return this.merge(other).getSize();
   }
 
+  // 返回两个Pizza共同拥有的ingres数量
+  public int mutualIngresWith(Pizza other) {
+    return this.getSize() + other.getSize() - this.diffIngresWith(other);
+  }
+
   // 返回一个新的pizza，是2~4个pizza的ingres的总和，序号为-1
   public Pizza merge(Pizza other) {
     Set<String> all = new HashSet<>(ingres);
