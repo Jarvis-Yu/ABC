@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.Set;
 
 public class Pizza {
@@ -6,5 +7,15 @@ public class Pizza {
 
   public Pizza(Set<String> ingres) {
     this.ingres = ingres;
+  }
+
+  public Set<String> getIngres() {
+    return ingres;
+  }
+
+  public int diffIngresWith(Pizza other) {
+    Set<String> diff = new HashSet<>(ingres);
+    ingres.removeAll(other.ingres);
+    return diff.size() + other.ingres.size();
   }
 }
