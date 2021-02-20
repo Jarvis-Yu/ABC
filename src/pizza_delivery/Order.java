@@ -1,13 +1,17 @@
+package pizza_delivery;
+
 import java.util.List;
 
 public class Order {
 
-	public int numberOfPizza;
-	public int numOfTeamOf2;
-	public int numOfTeamOf3;
-	public int numOfTeamOf4;
-	public List<Pizza> pizza;
-	public StringBuilder output = new StringBuilder();
+  public int numberOfPizza;
+  public int numOfTeamOf2;
+  public int numOfTeamOf3;
+  public int numOfTeamOf4;
+  public List<Pizza> pizza;
+  public StringBuilder output = new StringBuilder();
+  public int score = 0;
+
 
   public Order(int numberOfPizza, int numOfTeamOf2, int numOfTeamOf3, int numOfTeamOf4, List<Pizza> pizza) {
     this.numberOfPizza = numberOfPizza;
