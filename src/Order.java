@@ -16,6 +16,14 @@ public class Order {
     this.pizza = pizza;
   }
 
+  public Order(Order order) {
+    this.numberOfPizza = order.numberOfPizza;
+    this.numOfTeamOf2 = order.numOfTeamOf2;
+    this.numOfTeamOf3 = order.numOfTeamOf3;
+    this.numOfTeamOf4 = order.numOfTeamOf4;
+    this.pizza = order.pizza;
+  }
+
   @Override
   public String toString() {
     StringBuilder stringBuilder = new StringBuilder();
