@@ -3,10 +3,16 @@ import java.util.Set;
 
 public class Pizza {
 
+  private final int no;
   private final Set<String> ingres;
 
-  public Pizza(Set<String> ingres) {
+  public Pizza(int no, Set<String> ingres) {
+    this.no = no;
     this.ingres = ingres;
+  }
+
+  public int getNo() {
+    return no;
   }
 
   public Set<String> getIngres() {
