@@ -6,6 +6,7 @@ public class Pizza implements Comparable<Pizza>{
 
   private final int no;
   private final Set<String> ingres;
+  public String output;
 
   public Pizza(int no, Set<String> ingres) {
     this.no = no;
