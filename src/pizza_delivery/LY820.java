@@ -35,8 +35,8 @@ public class LY820 {
       }
     });
 
-    System.out.println(startPizza);
-    System.out.println(backUps);
+    System.out.printf("Start: %s", startPizza);
+    System.out.printf("%nBackUp: %s", backUps);
 
     return null;
   }
@@ -66,7 +66,7 @@ public class LY820 {
 //      }
 //    }
 
-    System.out.println(maxSoFar);
+//    System.out.println(maxSoFar);
   }
 }
 
