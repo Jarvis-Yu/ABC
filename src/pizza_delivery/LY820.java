@@ -23,14 +23,11 @@ public class LY820 {
     }
 
     Situation newSituation = baseSituation.copyOf();
-    Pizza startPizza = newSituation.pizza.get(0);
-    newSituation.pizza.remove(startPizza);
-    List<Integer> newOrder = new ArrayList<>(List.of(startPizza.getNo()));
-
-    Pizza combinedPizza = startPizza.copyOf();
+    List<Integer> newOrder = new ArrayList<>();
+    Pizza combinedPizza = new Pizza(-1, Set.of());
     Pizza theOther = new Pizza(-1, Set.of());
 
-    for (int i = 1; i < groupNo; i++) {
+    for (int i = 0; i < groupNo; i++) {
       final int upperBound = min(newSituation.pizza.size(), 5);
       final List<Pizza> backUps = newSituation.pizza.subList(0, upperBound);
 
@@ -52,16 +49,9 @@ public class LY820 {
     return newSituation;
   }
 
-  public static void main(String[] args) {
-    long startTime = System.currentTimeMillis();
-    Order order = Parser.parse(Data.tb);
-    order.pizza.sort(Pizza::compareTo);
-
+  private static Situation forLooping(Order order, Situation[][][] d) {
     Situation nothing = new Situation(0, order);
     Situation maxSoFar = new Situation(0, order);
-
-    Situation[][][] d = new Situation[order.numOfTeamOf2 + 1][order.numOfTeamOf3 + 1][order.numOfTeamOf4 + 1];
-    d[0][0][0] = new Situation(0, order);
 
     for (int i = 0; i <= order.numOfTeamOf2; i++) {
       for (int j = 0; j <= order.numOfTeamOf3; j++) {
@@ -70,16 +60,74 @@ public class LY820 {
               i > 0 ? addBaseOn(d[i - 1][j][k], 2) : nothing,
               j > 0 ? addBaseOn(d[i][j - 1][k], 3) : nothing,
               k > 0 ? addBaseOn(d[i][j][k - 1], 4) : nothing
-              );
+          );
           maxSoFar = max(maxSoFar, d[i][j][k]);
         }
       }
     }
 
-//    System.out.printf("%n%nFinally: %s%n%s", maxSoFar.getScore(), maxSoFar);
-    System.out.println(maxSoFar.getScore());
+    return maxSoFar;
+  }
+
+  private static Situation queueLooping(Order order, Situation[][][] d) {
+    List<TriPair<Integer, Integer, Integer>> combination = new ArrayList<>();
+    combination.add(TriPair.pair(0, 0, 0));
+
+    Situation nothing = new Situation(0, order);
+    Situation maxSoFar = new Situation(0, order);
+
+    int index = 0;
+    while (combination.size() > index) {
+      TriPair<Integer, Integer, Integer> c = combination.get(index);
+      int i = c.first;
+      int j = c.second;
+      int k = c.third;
+      d[i][j][k] = max(
+          i > 0 ? addBaseOn(d[i - 1][j][k], 2) : nothing,
+          j > 0 ? addBaseOn(d[i][j - 1][k], 3) : nothing,
+          k > 0 ? addBaseOn(d[i][j][k - 1], 4) : nothing
+      );
+      maxSoFar = max(maxSoFar, d[i][j][k]);
+      if (
+          (i == 0 || d[i][j][k].getScore() > d[i - 1][j][k].getScore())
+          && (j == 0 || d[i][j][k].getScore() > d[i][j - 1][k].getScore())
+          && (k == 0 || d[i][j][k].getScore() > d[i][j][k - 1].getScore())
+      ) {
+        if (i < order.numOfTeamOf2) combination.add(TriPair.pair(i + 1, j, k));
+        if (j < order.numOfTeamOf3) combination.add(TriPair.pair(i, j + 1, k));
+        if (k < order.numOfTeamOf4) combination.add(TriPair.pair(i, j, k + 1));
+      }
+      index++;
+    }
+    return maxSoFar;
+  }
+
+  public static Situation theLoop(Order order) {
+    Situation[][][] d = new Situation[order.numOfTeamOf2 + 1][order.numOfTeamOf3 + 1][order.numOfTeamOf4 + 1];
+    d[0][0][0] = new Situation(0, order);
+
+    return forLooping(order, d);
+  }
+
+  public static void dynamicProgramming(String givenOrder) {
+    Order order = Parser.parse(givenOrder);
+    order.pizza.sort(Pizza::compareTo);
+
+    Situation maximum = theLoop(order);
+
+    System.out.printf("%s%n%n", maximum);
+    System.out.println(maximum.getScore());
+  }
+
+  public static void dynamicProgrammingTimer(String givenOrder) {
+    long startTime = System.currentTimeMillis();
+    dynamicProgramming(givenOrder);
     long duration = System.currentTimeMillis() - startTime;
-    System.out.printf("Duration(ms): %d", duration);
+    System.out.printf("Duration(s): %s", duration / 1000.0);
+  }
+
+  public static void main(String[] args) {
+    dynamicProgrammingTimer(Data.tb);
   }
 }
 
