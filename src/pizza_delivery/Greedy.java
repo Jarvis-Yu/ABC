@@ -1,8 +1,14 @@
+package pizza_delivery;
+
 public class Greedy {
 
-	public static final int DEPTH = 25;
+	public static final int DEPTH = 100;
 
 	public static boolean runOnce(Order order, boolean fu, boolean mi, boolean yo) {
+		if (order.pizza.isEmpty()) {
+			return false;
+		}
+
 		var originalPizza = order.pizza.get(0);
 		var fstPizza = order.pizza.get(0);
 		var no = fstPizza.getNo();
@@ -25,7 +31,6 @@ public class Greedy {
 		}
 		futatsu = maxSize;
 
-		assert sndPizza != null;
 		fstPizza = fstPizza.merge(sndPizza);
 		maxSize = fstPizza.getSize();
 
@@ -44,7 +49,6 @@ public class Greedy {
 		}
 		mittsu = maxSize;
 
-		assert trdPizza != null;
 		fstPizza = fstPizza.merge(trdPizza);
 		maxSize = fstPizza.getSize();
 
@@ -65,17 +69,20 @@ public class Greedy {
 
 		order.pizza.remove(originalPizza);
 		order.pizza.remove(sndPizza);
-		if (yottsu >= mittsu && yo && fthPizza != originalPizza) {
+		if (yottsu > mittsu && yo && fthPizza != originalPizza) {
 			order.pizza.remove(trdPizza);
 			order.pizza.remove(fthPizza);
 			order.output.append("4 ").append(no).append(" ").append(used[0]).append(" ").append(used[1]).append(" ").append(used[2]).append("\n");
+			order.score += yottsu * yottsu;
 			return true;
-		} else if (mittsu >= futatsu && mi && trdPizza != originalPizza) {
+		} else if (mittsu > futatsu && mi && trdPizza != originalPizza) {
 			order.pizza.remove(trdPizza);
 			order.output.append("3 ").append(no).append(" ").append(used[0]).append(" ").append(used[1]).append("\n");
+			order.score += mittsu * mittsu;
 			return true;
 		} else if (fu && sndPizza != originalPizza) {
 			order.output.append("2 ").append(no).append(" ").append(used[0]).append("\n");
+			order.score += futatsu * futatsu;
 			return true;
 		}
 
