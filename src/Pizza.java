@@ -55,4 +55,20 @@ public class Pizza implements Comparable<Pizza>{
   public int compareTo(Pizza o) {
     return o.getSize() - getSize();
   }
+
+  @Override
+  public int hashCode() {
+    return no + ingres.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+      if (!(object instanceof Pizza)) {
+        return false;
+      } else if (object == this) {
+        return true;
+      }
+      Pizza other = (Pizza) object;
+      return no == other.no && ingres.equals(other.ingres);
+  }
 }
