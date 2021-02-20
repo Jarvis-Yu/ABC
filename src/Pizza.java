@@ -2,7 +2,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Pizza implements Comparator<Pizza>{
+public class Pizza implements Comparable<Pizza>{
 
   private final int no;
   private final Set<String> ingres;
@@ -37,7 +37,7 @@ public class Pizza implements Comparator<Pizza>{
   }
 
   @Override
-  public int compare(Pizza o1, Pizza o2) {
-    return o1.getSize() - o2.getSize();
+  public int compareTo(Pizza o) {
+    return o.getSize() - getSize();
   }
 }
