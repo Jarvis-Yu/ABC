@@ -31,7 +31,6 @@ public class Greedy {
 		}
 		futatsu = maxSize;
 
-		assert sndPizza != null;
 		fstPizza = fstPizza.merge(sndPizza);
 		maxSize = fstPizza.getSize();
 
@@ -50,7 +49,6 @@ public class Greedy {
 		}
 		mittsu = maxSize;
 
-		assert trdPizza != null;
 		fstPizza = fstPizza.merge(trdPizza);
 		maxSize = fstPizza.getSize();
 
