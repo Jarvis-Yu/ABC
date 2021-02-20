@@ -26,9 +26,7 @@ public class Pizza implements Comparable<Pizza>{
 
   // 返回两个Pizza总共的不同ingres种类数
   public int diffIngresWith(Pizza other) {
-    Set<String> all = new HashSet<>(ingres);
-    all.addAll(other.ingres);
-    return all.size();
+    return this.merge(other).getSize();
   }
 
   // 返回一个新的pizza，是2~4个pizza的ingres的总和，序号为-1
@@ -54,5 +52,21 @@ public class Pizza implements Comparable<Pizza>{
   @Override
   public int compareTo(Pizza o) {
     return o.getSize() - getSize();
+  }
+
+  @Override
+  public int hashCode() {
+    return no + ingres.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+      if (!(object instanceof Pizza)) {
+        return false;
+      } else if (object == this) {
+        return true;
+      }
+      Pizza other = (Pizza) object;
+      return no == other.no && ingres.equals(other.ingres);
   }
 }
