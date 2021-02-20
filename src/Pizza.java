@@ -31,10 +31,19 @@ public class Pizza implements Comparable<Pizza>{
     return all.size();
   }
 
+  // 返回一个新的pizza，是2~4个pizza的ingres的总和，序号为-1
   public Pizza merge(Pizza other) {
     Set<String> all = new HashSet<>(ingres);
     all.addAll(other.ingres);
     return new Pizza(-1, all);
+  }
+
+  public Pizza merge(Pizza other1, Pizza other2) {
+    return this.merge(other1).merge(other2);
+  }
+
+  public Pizza merge(Pizza other1, Pizza other2, Pizza other3) {
+    return this.merge(other1, other2).merge(other3);
   }
 
   @Override
