@@ -11,6 +11,7 @@ public class Order {
   public List<Pizza> pizza;
   public StringBuilder output = new StringBuilder();
   public int score = 0;
+  public int delivers = 0;
 
 
   public Order(int numberOfPizza, int numOfTeamOf2, int numOfTeamOf3, int numOfTeamOf4, List<Pizza> pizza) {

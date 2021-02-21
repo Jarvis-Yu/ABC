@@ -1,7 +1,6 @@
 package pizza_delivery;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -18,67 +17,146 @@ public class LY820 {
   }
 
   public static Situation addBaseOn(Situation baseSituation, int groupNo) {
-    Pizza startPizza = baseSituation.pizza.get(0);
-    final int size = baseSituation.pizza.size();
+
+    if (baseSituation.pizza.size() < groupNo) {
+      return baseSituation;
+    }
+
     Situation newSituation = baseSituation.copyOf();
-    newSituation.pizza.remove(startPizza.getNo());
-    List<Pizza> newOrder = new ArrayList<>(List.of(startPizza));
+    List<Integer> newOrder = new ArrayList<>();
+    Pizza combinedPizza = new Pizza(-1, Set.of());
+    Pizza theOther = new Pizza(-1, Set.of());
 
-    final int upperBound = min(size, 10);
-    final List<Pizza> backUps = baseSituation.pizza.subList(1, upperBound);
+    for (int i = 0; i < groupNo; i++) {
+      final int upperBound = min(newSituation.pizza.size(), 5);
+      final List<Pizza> backUps = newSituation.pizza.subList(0, upperBound);
 
-
-    backUps.sort(new Comparator<Pizza>() {
-      @Override
-      public int compare(Pizza p1, Pizza p2) {
-        return startPizza.mutualIngresWith(p2) - startPizza.mutualIngresWith(p1);
+      theOther = backUps.get(0);
+      for (int j = 1; j < upperBound; j++) {
+        if (combinedPizza.mutualIngresWith(backUps.get(j)) < combinedPizza.mutualIngresWith(theOther)) {
+          theOther = backUps.get(j);
+        }
       }
-    });
 
-    System.out.printf("Start: %s", startPizza);
-    System.out.printf("%nBackUp: %s", backUps);
+      newOrder.add(theOther.getNo());
+      combinedPizza = combinedPizza.merge(theOther);
 
-    return null;
+      newSituation.pizza.remove(theOther);
+    }
+
+    newSituation.addOrder(combinedPizza.getSize(), newOrder);
+
+    return newSituation;
   }
 
-  public static void main(String[] args) {
-    Order order = Parser.parse(Main.ta);
-    order.pizza.sort(Pizza::compareTo);
-    System.out.println(order);
+  private static Situation forLooping(Order order, Situation[][][] d) {
+    Situation nothing = new Situation(0, order);
+    Situation maxSoFar = new Situation(0, order);
+
+    for (int i = 0; i <= order.numOfTeamOf2; i++) {
+      for (int j = 0; j <= order.numOfTeamOf3; j++) {
+        for (int k = 0; k <= order.numOfTeamOf4; k++) {
+          d[i][j][k] = max(
+              i > 0 ? addBaseOn(d[i - 1][j][k], 2) : nothing,
+              j > 0 ? addBaseOn(d[i][j - 1][k], 3) : nothing,
+              k > 0 ? addBaseOn(d[i][j][k - 1], 4) : nothing
+          );
+          maxSoFar = max(maxSoFar, d[i][j][k]);
+        }
+      }
+    }
+
+    return maxSoFar;
+  }
+
+  private static Situation queueLooping(Order order, Situation[][][] d) {
+    List<TriPair<Integer, Integer, Integer>> combination = new ArrayList<>();
+    combination.add(TriPair.pair(0, 0, 0));
+
+    for (int i = 0; i <= order.numOfTeamOf2; i++) {
+      for (int j = 0; j <= order.numOfTeamOf3; j++) {
+        for (int k = 0; k <= order.numOfTeamOf4; k++) {
+          d[i][j][k] = d[0][0][0];
+        }
+      }
+    }
 
     Situation nothing = new Situation(0, order);
     Situation maxSoFar = new Situation(0, order);
 
-    Situation[][][] d = new Situation[order.numOfTeamOf2][order.numOfTeamOf3][order.numOfTeamOf4];
+    int index = 0;
+    while (combination.size() > index) {
+      TriPair<Integer, Integer, Integer> c = combination.get(index);
+      int i = c.first;
+      int j = c.second;
+      int k = c.third;
+      d[i][j][k] = max(
+          i > 0 ? addBaseOn(d[i - 1][j][k], 2) : nothing,
+          j > 0 ? addBaseOn(d[i][j - 1][k], 3) : nothing,
+          k > 0 ? addBaseOn(d[i][j][k - 1], 4) : nothing
+      );
+      maxSoFar = max(maxSoFar, d[i][j][k]);
+      if (
+          (i == 0 || d[i][j][k].getScore() > d[i - 1][j][k].getScore())
+          && (j == 0 || d[i][j][k].getScore() > d[i][j - 1][k].getScore())
+          && (k == 0 || d[i][j][k].getScore() > d[i][j][k - 1].getScore())
+      ) {
+        if (i < order.numOfTeamOf2) combination.add(TriPair.pair(i + 1, j, k));
+        if (j < order.numOfTeamOf3) combination.add(TriPair.pair(i, j + 1, k));
+        if (k < order.numOfTeamOf4) combination.add(TriPair.pair(i, j, k + 1));
+      }
+      index++;
+    }
+    return maxSoFar;
+  }
+
+  public static Situation theLoop(Order order) {
+    Situation[][][] d = new Situation[order.numOfTeamOf2 + 1][order.numOfTeamOf3 + 1][order.numOfTeamOf4 + 1];
     d[0][0][0] = new Situation(0, order);
 
-    d[1][0][0] = addBaseOn(d[0][0][0], 2);
-//    for (int i = 0; i < order.numOfTeamOf2; i++) {
-//      for (int j = 0; j < order.numOfTeamOf3; j++) {
-//        for (int k = 0; k < order.numOfTeamOf4; k++) {
-//          d[i][j][k] = max(
-//              i > 0 ? addBaseOn(d[i - 1][j][k], 2) : nothing,
-//              j > 0 ? addBaseOn(d[i][j - 1][k], 3) : nothing,
-//              k > 0 ? addBaseOn(d[i][j][k - 1], 4) : nothing
-//              );
-//          maxSoFar = max(maxSoFar, d[i][j][k]);
-//        }
-//      }
-//    }
+    return forLooping(order, d);
+  }
 
-//    System.out.println(maxSoFar);
+  public static void dynamicProgramming(String givenOrder) {
+    Order order = Parser.parse(givenOrder);
+    order.pizza.sort(Pizza::compareTo);
+
+    Situation maximum = theLoop(order);
+
+    System.out.printf("%s%n%n", maximum);
+    System.out.println(maximum.getScore());
+  }
+
+  public static void dynamicProgrammingTimer(String givenOrder) {
+    long startTime = System.currentTimeMillis();
+    dynamicProgramming(givenOrder);
+    long duration = System.currentTimeMillis() - startTime;
+    System.out.printf("Duration(s): %s", duration / 1000.0);
+  }
+
+  public static void main(String[] args) {
+    dynamicProgrammingTimer(Data.tb);
   }
 }
 
 class Situation extends Order {
 
-  private final int score;
-  private final List<Pair<Integer, List<Integer>>> orders = new ArrayList<>();
+  private int score = 0;
+  private List<Pair<Integer, List<Integer>>> orders = new ArrayList<>();
 
   public Situation(
       int score, int numberOfPizza, int numOfTeamOf2, int numOfTeamOf3, int numOfTeamOf4, List<Pizza> pizza) {
     super(numberOfPizza, numOfTeamOf2, numOfTeamOf3, numOfTeamOf4, pizza);
     this.score = score;
+  }
+
+  public Situation(
+      int score,
+      List<Pair<Integer, List<Integer>>> orders,
+      int numberOfPizza, int numOfTeamOf2, int numOfTeamOf3, int numOfTeamOf4, List<Pizza> pizza) {
+    super(numberOfPizza, numOfTeamOf2, numOfTeamOf3, numOfTeamOf4, pizza);
+    this.score = score;
+    this.orders = orders;
   }
 
   public Situation(int score, Order order) {
@@ -87,6 +165,11 @@ class Situation extends Order {
   }
 
   public int getScore() {
+    score = 0;
+    for (Pair<Integer, List<Integer>> order : orders) {
+      int temp = order.first;
+      score += temp * temp;
+    }
     return score;
   }
 
@@ -96,7 +179,13 @@ class Situation extends Order {
 
   public Situation copyOf() {
     return new Situation(
-        score, super.numberOfPizza, super.numOfTeamOf2, super.numOfTeamOf3, super.numOfTeamOf4, super.pizza);
+        score,
+        new ArrayList<>(orders),
+        super.numberOfPizza,
+        super.numOfTeamOf2,
+        super.numOfTeamOf3,
+        super.numOfTeamOf4,
+        new ArrayList<>(super.pizza));
   }
 
   @Override
@@ -104,7 +193,7 @@ class Situation extends Order {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append(orders.size());
     for (Pair<Integer, List<Integer>> order : orders) {
-      stringBuilder.append(String.format("%n%d", order.first));
+      stringBuilder.append(String.format("%n%d", order.second.size()));
       for (Integer integer : order.second) {
         stringBuilder.append(String.format(" %d", integer));
       }
