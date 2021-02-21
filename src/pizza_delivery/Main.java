@@ -4,13 +4,14 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		var o = Parser.parse(Data.tb);
+		var o = Serialization.getE();
 
 		while (Greedy.runOnce(o, o.numOfTeamOf2 > 0, o.numOfTeamOf3 > 0, o.numOfTeamOf4 > 0)) {
-			// System.out.println("Run...");
+			o.delivers++;
 		}
-		System.out.println(o.output.toString());
+		var res = o.delivers + "\n" + o.output.toString();
 		System.out.println(o.score);
+		Serialization.writeResult("/Users/crait/Desktop/e.txt", res);
 
 	}
 }

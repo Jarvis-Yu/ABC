@@ -7,6 +7,20 @@ import java.util.List;
 
 public class Serialization {
 
+  public static void writeResult(String filePath, String result) {
+    try {
+      File file = new File(filePath);
+      if (file.createNewFile()) {
+        FileWriter fw = new FileWriter(file);
+        fw.write(result);
+        fw.close();
+      }
+    } catch (Exception e) {
+      System.out.println("写入文件出错");
+      e.printStackTrace();
+    }
+  }
+
   public static Order parseOneFile(String filePath) {
     List<String> list = new ArrayList<>();
     try {
